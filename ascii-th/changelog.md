@@ -1,3 +1,7 @@
+### 1.0.0.14 (2023-01-02)
+
+Change test suite from `hedgehog` to `hspec`
+
 ### 1.0.0.13 (2023-01-02)
 
 Minor Cabal correction (change `extra-doc-files` to `extra-source-files`)
