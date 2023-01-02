@@ -1,11 +1,11 @@
-module ASCII.TemplateHaskell (
-
+module ASCII.TemplateHaskell
+  (
     {- * Characters          -} charExp,     charPat,
     {- * Character lists     -} charListExp, charListPat,
     {- * Character supersets -} isCharExp,   isCharPat,
-    {- * String supersets    -} isStringExp, isStringPat
-
-  ) where
+    {- * String supersets    -} isStringExp, isStringPat,
+  )
+  where
 
 import qualified ASCII.Char as ASCII
 import qualified ASCII.Superset as S

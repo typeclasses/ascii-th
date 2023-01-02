@@ -1,4 +1,9 @@
-module ASCII.QuasiQuoters ( char, string ) where
+module ASCII.QuasiQuoters
+  (
+    char,
+    string,
+  )
+  where
 
 import ASCII.Char (Char)
 import ASCII.Superset (toCharListMaybe, toCharMaybe)
