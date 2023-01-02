@@ -19,9 +19,12 @@ import qualified Data.String as Unicode
 
 {- | Produces an expression or a pattern corresponding to an ASCII character.
 
-The result will have an 'ASCII.Superset.CharSuperset' constraint; since this is polymorphic, use with a type signature to specify the particular you want is recommended.
+The result will have an 'ASCII.Superset.CharSuperset' constraint; since this is
+polymorphic, use with a type signature to specify the particular you want is
+recommended.
 
-The quasi-quoted string must consist of a single character that is within the ASCII character set.
+The quasi-quoted string must consist of a single character that is within the
+ASCII character set.
 
 >>> :set -XQuasiQuotes
 
@@ -45,9 +48,12 @@ char = expPatQQ requireOneAscii isCharExp isCharPat
 
 {- | Produces an expression or a pattern corresponding to an ASCII string.
 
-The result will have an 'ASCII.Superset.StringSuperset' constraint; since this is polymorphic, use with a type signature to specify the particular you want is recommended.
+The result will have an 'ASCII.Superset.StringSuperset' constraint; since this
+is polymorphic, use with a type signature to specify the particular you want is
+recommended.
 
-The quasi-quoted string must consist only of characters are within the ASCII character set.
+The quasi-quoted string must consist only of characters are within the ASCII
+character set.
 
 >>> :set -XQuasiQuotes
 
@@ -95,13 +101,12 @@ requireAsciiList = toCharListMaybe || "Must be only ASCII characters."
 f || msg = \a -> case f a of Just b -> return b; Nothing -> fail msg
 
 expPatQQ :: (Unicode.String -> Q a) -> (a -> Q Exp) -> (a -> Q Pat) -> QuasiQuoter
-expPatQQ f a b =
-    QuasiQuoter
-        { quoteExp  = f >=> a
-        , quotePat  = f >=> b
-        , quoteType = notType
-        , quoteDec  = notDec
-        }
+expPatQQ f a b = QuasiQuoter
+    { quoteExp  = f >=> a
+    , quotePat  = f >=> b
+    , quoteType = notType
+    , quoteDec  = notDec
+    }
 
 notType :: MonadFail m => a -> m b
 notType _ = fail "Cannot be used in a type context."
