@@ -1,7 +1,7 @@
 cabal-version: 3.0
 
 name: ascii-th
-version: 1.0.0.12
+version: 1.0.0.13
 synopsis: Template Haskell support for ASCII
 category: Data, Text
 
@@ -18,7 +18,7 @@ maintainer: Chris Martin, Julie Moronuki
 homepage: https://github.com/typeclasses/ascii-th
 bug-reports: https://github.com/typeclasses/ascii-th/issues
 
-extra-doc-files: *.md
+extra-source-files: *.md
 
 source-repository head
     type: git
@@ -64,4 +64,4 @@ test-suite test-ascii-th
         ascii-th
       , bytestring ^>= 0.10.12 || ^>= 0.11
       , hedgehog ^>= 1.0.5 || ^>= 1.1 || ^>= 1.2
-      , text ^>= 1.2.4.1 || ^>= 2.0
+      , text ^>= 1.2.4 || ^>= 2.0
