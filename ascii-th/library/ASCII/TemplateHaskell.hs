@@ -1,9 +1,12 @@
 module ASCII.TemplateHaskell
   (
-    {- * Characters          -} charExp,     charPat,
-    {- * Character lists     -} charListExp, charListPat,
-    {- * Character supersets -} isCharExp,   isCharPat,
-    {- * String supersets    -} isStringExp, isStringPat,
+    {- * Monomorphic -}
+    {- ** Character -} charExp, charPat,
+    {- ** String -} charListExp, charListPat,
+
+    {- * Polymorphic -}
+    {- ** Character -} isCharExp, isCharPat,
+    {- ** String -} isStringExp, isStringPat,
   )
   where
 
