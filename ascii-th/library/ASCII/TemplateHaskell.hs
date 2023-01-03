@@ -8,6 +8,7 @@ module ASCII.TemplateHaskell
     {- * Polymorphic -}
     {- ** Character -} isCharExp, isCharPat,
     {- ** String -} isStringExp, isStringPat,
+    {- ** Caseless string -} caselessIsStringPat,
   )
   where
 
@@ -130,3 +131,8 @@ isStringExp xs = [| S.fromCharList $(charListExp xs) |]
 {-| Pattern that matches a type with a 'S.ToString' constraint -}
 isStringPat :: [ASCII.Char] -> Q Pat
 isStringPat xs = [p| (S.toCharListMaybe -> Just $(charListPat xs)) |]
+
+{-| Matches a value of any type belonging to the 'S.ToCaselessString'
+class, as if it were a list of 'CaselessChar' -}
+caselessIsStringPat :: [CaselessChar] -> Q Pat
+caselessIsStringPat xs = [p| (S.toCaselessCharListMaybe -> Just $(caselessListPat xs)) |]

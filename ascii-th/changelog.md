@@ -4,6 +4,7 @@ Add to `ASCII.TemplateHaskell`:
 
 - `caselessListExp`
 - `caselessListPat`
+- `caselessIsStringPat`
 
 ### 1.1.0.0 (2023-01-03)
 

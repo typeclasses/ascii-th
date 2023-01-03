@@ -13,6 +13,7 @@ import Data.Word (Word8)
 import Prelude (Integer)
 import System.IO (IO)
 
+import qualified ASCII.Caseless as Caseless
 import qualified Data.ByteString.Builder as BS.Builder
 import qualified Data.ByteString.Lazy as LBS
 
@@ -83,4 +84,12 @@ main = hspec $ do
                 let x = case (66 :: Word8) of $(TH.isCharPat CapitalLetterA) -> 1
                                               $(TH.isCharPat CapitalLetterB) -> 2
                                               _ -> 3
-                shouldBe @Word8 x 2
+                shouldBe @Integer x 2
+
+        describe "caselessIsStringPat" $ do
+            it "matches a cased string regardless of its case" $ do
+                let x = case [QQ.string|Hi!|] :: Text of
+                      $(TH.caselessIsStringPat [Caseless.LetterG, Caseless.LetterO, Caseless.FullStop]) -> 1
+                      $(TH.caselessIsStringPat [Caseless.LetterH, Caseless.LetterI, Caseless.ExclamationMark]) -> 2
+                      _ -> 3
+                shouldBe @Integer x 2
