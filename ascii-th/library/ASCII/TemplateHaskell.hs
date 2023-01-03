@@ -22,11 +22,9 @@ pat = dataToPatQ (\_ -> Nothing)
 
 {- |
 
->>> $(toCharOrFail 'F' >>= charExp)
-CapitalLetterF
-
->>> $(toCharOrFail '\DEL' >>= charExp)
-Delete
+@
+$(charExp CapitalLetterF) == CapitalLetterF
+@
 
 -}
 
@@ -35,23 +33,15 @@ charExp = exp
 
 {- |
 
->>> :{
->>> case SmallLetterS of
->>>     $(toCharOrFail 'r' >>= charPat) -> 1
->>>     $(toCharOrFail 's' >>= charPat) -> 2
->>>     _                               -> 3
->>> :}
-2
-
-This is the same as:
-
->>> :{
->>> case SmallLetterS of
->>>     SmallLetterR -> 1
->>>     SmallLetterS -> 2
->>>     _            -> 3
->>> :}
-2
+@
+let
+    x = case SmallLetterS of
+          $(charPat SmallLetterR) -> 1
+          $(charPat SmallLetterS) -> 2
+          _ -> 3
+in
+    x == 2
+@
 
 -}
 
@@ -60,8 +50,9 @@ charPat = pat
 
 {- |
 
->>> $(charListExp [CapitalLetterH, SmallLetterI])
-[CapitalLetterH,SmallLetterI]
+@
+$(charListExp [CapitalLetterH, SmallLetterI]) == [CapitalLetterH, SmallLetterI]
+@
 
 -}
 
@@ -70,13 +61,15 @@ charListExp = exp
 
 {- |
 
->>> :{
->>> case [CapitalLetterH, SmallLetterI] of
->>>     $(charListPat [CapitalLetterH, SmallLetterA]) -> 1
->>>     $(charListPat [CapitalLetterH, SmallLetterI]) -> 2
->>>     _                                             -> 3
->>> :}
-2
+@
+let
+    x = case [CapitalLetterH, SmallLetterI] of
+          $(charListPat [CapitalLetterH, SmallLetterA]) -> 1
+          $(charListPat [CapitalLetterH, SmallLetterI]) -> 2
+          _ -> 3
+in
+    x == 2
+@
 
 -}
 
@@ -85,14 +78,13 @@ charListPat = pat
 
 {- |
 
->>> $(isCharExp CapitalLetterA) :: ASCII.Char
-CapitalLetterA
+@
+$(isCharExp CapitalLetterA) == CapitalLetterA
 
->>> $(isCharExp CapitalLetterA) :: Word8
-65
+$(isCharExp CapitalLetterA) == (65 :: Word8)
 
->>> $(isCharExp CapitalLetterA) :: ASCII Word8
-asciiUnsafe 65
+$(isCharExp CapitalLetterA) == ('ASCII.Refinement.asciiUnsafe' 65 :: 'ASCII.Refinement.ASCII' Word8)
+@
 
 -}
 
@@ -101,15 +93,15 @@ isCharExp x = [| S.fromChar $(charExp x) |]
 
 {- |
 
->>> :set -XViewPatterns
-
->>> :{
->>> case (66 :: Word8) of
->>>     $(isCharPat CapitalLetterA) -> 1
->>>     $(isCharPat CapitalLetterB) -> 2
->>>     _                           -> 3
->>> :}
-2
+@
+let
+    x = case (66 :: Word8) of
+          $(isCharPat CapitalLetterA) -> 1
+          $(isCharPat CapitalLetterB) -> 2
+          _                           -> 3
+in
+    x == 2
+@
 
 -}
 

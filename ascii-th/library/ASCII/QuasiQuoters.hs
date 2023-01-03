@@ -1,3 +1,9 @@
+{-|
+
+Use of these quasi-quoters in a pattern context requires the @ViewPatterns@
+language extension.
+
+-}
 module ASCII.QuasiQuoters
   (
     char,
@@ -26,20 +32,25 @@ recommended.
 The quasi-quoted string must consist of a single character that is within the
 ASCII character set.
 
->>> :set -XQuasiQuotes
+In an expression context:
 
->>> [char|e|] :: ASCII.Char
-SmallLetterE
+@
+[char|e|] == SmallLetterE
 
->>> [char|e|] :: Word8
-101
+[char|e|] == (101 :: Word8)
+@
 
-Use in a pattern context requires enabling the @ViewPatterns@ language extension.
+In a pattern context:
 
->>> :set -XViewPatterns
-
->>> case Tilde of [char|@|] -> 1; [char|~|] -> 2; _ -> 3
-2
+@
+let
+    x = case Tilde of
+          [char|@|] -> 1
+          [char|~|] -> 2
+          _ -> 3
+in
+    x == 2
+@
 
 -}
 
@@ -55,27 +66,30 @@ recommended.
 The quasi-quoted string must consist only of characters are within the ASCII
 character set.
 
->>> :set -XQuasiQuotes
+In an expression context:
 
->>> [string|Hello!|] :: [ASCII.Char]
-[CapitalLetterH,SmallLetterE,SmallLetterL,SmallLetterL,SmallLetterO,ExclamationMark]
+@
+[string|Hello!|] ==
+    [CapitalLetterH,SmallLetterE,SmallLetterL,SmallLetterL,SmallLetterO,ExclamationMark]
 
->>> [string|Hello!|] :: Data.String.String
-"Hello!"
+[string|Hello!|] == ("Hello!" :: 'Data.String.String')
 
->>> [string|Hello!|] :: Data.Text.Text
-"Hello!"
+[string|Hello!|] == ("Hello!" :: 'Data.Text.Text')
 
->>> Data.ByteString.Builder.toLazyByteString [string|Hello!|]
-"Hello!"
+'Data.ByteString.Builder.toLazyByteString' [string|Hello!|] == "Hello!"
+@
 
+In a pattern context:
 
-Use in a pattern context requires enabling the @ViewPatterns@ language extension.
-
->>> :set -XViewPatterns
-
->>> case [CapitalLetterH, SmallLetterI] of [string|Bye|] -> 1; [string|Hi|] -> 2; _ -> 3
-2
+@
+let
+    x = case [CapitalLetterH, SmallLetterI] of
+          [string|Bye|] -> 1
+          [string|Hi|] -> 2
+          _ -> 3
+in
+    x == 2
+@
 
 -}
 
