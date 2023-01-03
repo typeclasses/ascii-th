@@ -5,7 +5,6 @@ New in `ASCII.QuasiQuoters`:
 - `caseless`
 - `upper`
 - `lower`
-- `ofCase`
 
 New in `ASCII.TemplateHaskell`:
 

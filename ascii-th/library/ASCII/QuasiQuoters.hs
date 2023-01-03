@@ -11,7 +11,6 @@ module ASCII.QuasiQuoters
     caseless,
     upper,
     lower,
-    ofCase,
   )
   where
 
@@ -126,38 +125,54 @@ A case-insensitive match of any type belonging to the
 caseless :: QuasiQuoter
 caseless = expPatQQ requireAsciiListCI TH.caselessListExp TH.caselessIsStringPat
 
--- | @'ofCase' 'LowerCase'@
-lower :: QuasiQuoter
-lower = ofCase LowerCase
-
--- | @'ofCase' 'UpperCase'@
-upper :: QuasiQuoter
-upper = ofCase UpperCase
-
 {-| An expression or pattern corresponding to an ASCII string where all the
-letters are of a particular case
+letters are of lower case
 
 The letters in the body of the quasi-quotation may be written in any case
-you like; they will be converted to the designated case automatically.
-
-Since functions cannot be used as quasi-quoters, you likely want 'lower' or
-'upper' instead of using this function directly.
+you like; they will be converted to lower case automatically.
 
 === In an expression context
 
 The expression can become any type belonging to the 'ASCII.Superset.FromString'
-class. Any letters in the quoted content will be converted to the given 'Case'.
+class. Any letters in the quoted content will be converted to lower case.
 
 === In a pattern context
 
 The pattern matches a value of a type satisfying the 'ASCII.Superset.ToString'
 constraint. A value matches this pattern if:
 
-* All of the letters in the tested value are in the given 'Case'
-* The tested value satisfies a case-insensitive comparison with the
-  quasi-quoted content
+* All of the letters in the tested value are in lower case
+* The tested value satisfies a case-insensitive comparison
+  with the quasi-quoted content
 
 -}
+lower :: QuasiQuoter
+lower = ofCase LowerCase
+
+{-| An expression or pattern corresponding to an ASCII string where all the
+letters are of upper case
+
+The letters in the body of the quasi-quotation may be written in any case
+you like; they will be converted to upper case automatically.
+
+=== In an expression context
+
+The expression can become any type belonging to the 'ASCII.Superset.FromString'
+class. Any letters in the quoted content will be converted to upper case.
+
+=== In a pattern context
+
+The pattern matches a value of a type satisfying the 'ASCII.Superset.ToString'
+constraint. A value matches this pattern if:
+
+* All of the letters in the tested value are in upper case
+* The tested value satisfies a case-insensitive comparison
+  with the quasi-quoted content
+
+-}
+upper :: QuasiQuoter
+upper = ofCase UpperCase
+
 ofCase :: Case -> QuasiQuoter
 ofCase c = expPatQQ (requireAsciiToCase c) TH.isStringExp TH.isStringPat
 
