@@ -8,19 +8,25 @@ module ASCII.QuasiQuoters
   (
     char,
     string,
+    caseless,
   )
   where
 
+import ASCII.Case (Case)
+import ASCII.Caseless (CaselessChar)
 import ASCII.Char (Char)
-import ASCII.Superset (toCharListMaybe, toCharMaybe)
-import ASCII.TemplateHaskell (isCharExp, isCharPat, isStringExp, isStringPat)
 import Control.Monad (return, (>=>))
 import Control.Monad.Fail (MonadFail, fail)
+import Data.Functor ((<$>))
 import Data.Maybe (Maybe (..))
 import Language.Haskell.TH.Quote (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp, Pat, Q)
 
+import qualified ASCII.TemplateHaskell as TH
+import qualified ASCII.Caseless as Caseless
+import qualified ASCII.Superset as S
 import qualified Data.Char as Unicode
+import qualified Data.List as List
 import qualified Data.String as Unicode
 
 {-| An expression pattern corresponding to an ASCII character
@@ -58,7 +64,7 @@ in
 -}
 
 char :: QuasiQuoter
-char = expPatQQ requireOneAscii isCharExp isCharPat
+char = expPatQQ requireOneAscii TH.isCharExp TH.isCharPat
 
 {- | An expression or pattern corresponding to an ASCII string
 
@@ -100,7 +106,22 @@ in
 -}
 
 string :: QuasiQuoter
-string = expPatQQ requireAsciiList isStringExp isStringPat
+string = expPatQQ requireAsciiList TH.isStringExp TH.isStringPat
+
+{-| An expression or pattern corresponding to a case-insensitive ASCII string
+
+=== In an expression context
+
+A monomorphic expression of type @['CaselessChar']@.
+
+=== In a pattern context
+
+A case-insensitive match of any type belonging to the
+'ASCII.Superset.ToCaselessString' class.
+
+-}
+caseless :: QuasiQuoter
+caseless = expPatQQ requireAsciiListCI TH.caselessListExp TH.caselessIsStringPat
 
 requireOneAscii :: Unicode.String -> Q Char
 requireOneAscii = requireOne >=> requireAscii
@@ -112,10 +133,13 @@ requireOne :: Unicode.String -> Q Unicode.Char
 requireOne = oneMaybe || "Must be exactly one character."
 
 requireAscii :: Unicode.Char -> Q Char
-requireAscii = toCharMaybe || "Must be an ASCII character."
+requireAscii = S.toCharMaybe || "Must be an ASCII character."
 
 requireAsciiList :: Unicode.String -> Q [Char]
-requireAsciiList = toCharListMaybe || "Must be only ASCII characters."
+requireAsciiList = S.toCharListMaybe || "Must be only ASCII characters."
+
+requireAsciiListCI :: Unicode.String -> Q [CaselessChar]
+requireAsciiListCI = S.toCaselessCharListMaybe || "Must be only ASCII characters."
 
 (||) :: (a -> Maybe b) -> Unicode.String -> a -> Q b
 f || msg = \a -> case f a of Just b -> return b; Nothing -> fail msg

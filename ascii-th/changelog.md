@@ -1,6 +1,10 @@
 ### 1.1.1.0 (2023-01-03)
 
-Add to `ASCII.TemplateHaskell`:
+New in `ASCII.QuasiQuoters`:
+
+- `caseless`
+
+New in `ASCII.TemplateHaskell`:
 
 - `caselessListExp`
 - `caselessListPat`

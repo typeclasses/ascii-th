@@ -44,6 +44,23 @@ main = hspec $ do
                           [QQ.string|Bye|] -> 1; [QQ.string|Hi|] -> 2; _ -> 3
                 shouldBe @Integer x 2
 
+        describe "caseless" $ do
+            it "can be [CaselessChar]" $ shouldBe [QQ.caseless|Hello!|]
+                [Caseless.LetterH, Caseless.LetterE, Caseless.LetterL,
+                Caseless.LetterL, Caseless.LetterO, Caseless.ExclamationMark]
+            it "can be a pattern over [CaselessChar]" $ do
+                let x = case [Caseless.LetterH, Caseless.LetterI] of
+                          [QQ.caseless|Bye|] -> 1; [QQ.caseless|Hi|] -> 2; _ -> 3
+                shouldBe @Integer x 2
+            it "can be a pattern over Text" $ do
+                let x = case [QQ.string|Hello!|] :: Text of
+                          [QQ.caseless|Bye!|] -> 1; [QQ.caseless|Hello!|] -> 2; _ -> 3
+                shouldBe @Integer x 2
+            it "matches Text in a case-insensitive manner" $ do
+                let x = case [QQ.string|Hello!|] :: Text of
+                          [QQ.caseless|Bye!|] -> 1; [QQ.caseless|hEllo!|] -> 2; _ -> 3
+                shouldBe @Integer x 2
+
     describe "ASCII.TemplateHaskell" $ do
 
         describe "charExp" $
