@@ -61,6 +61,34 @@ main = hspec $ do
                           [QQ.caseless|Bye!|] -> 1; [QQ.caseless|hEllo!|] -> 2; _ -> 3
                 shouldBe @Integer x 2
 
+        describe "upper" $ do
+            it "can be Text" $ shouldBe [QQ.upper|Hello!|] ("HELLO!" :: Text)
+            it "can match Text" $ do
+                let x = case "HI!" :: Text of
+                          [QQ.upper|wow|] -> 1
+                          [QQ.upper|Hi!|] -> 2
+                          _ -> 3
+                shouldBe @Integer x 2
+            it "only matches all upper-case Text" $ do
+                let x = case "Hi!" :: Text of
+                          [QQ.upper|Hi!|] -> 1
+                          _ -> 2
+                shouldBe @Integer x 2
+
+        describe "lower" $ do
+            it "can be Text" $ shouldBe [QQ.lower|Hello!|] ("hello!" :: Text)
+            it "can match Text" $ do
+                let x = case "hi!" :: Text of
+                          [QQ.lower|wow|] -> 1
+                          [QQ.lower|Hi!|] -> 2
+                          _ -> 3
+                shouldBe @Integer x 2
+            it "only matches all lower-case Text" $ do
+                let x = case "Hi!" :: Text of
+                          [QQ.lower|Hi!|] -> 1
+                          _ -> 2
+                shouldBe @Integer x 2
+
     describe "ASCII.TemplateHaskell" $ do
 
         describe "charExp" $

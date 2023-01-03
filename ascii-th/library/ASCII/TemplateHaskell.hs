@@ -12,17 +12,13 @@ module ASCII.TemplateHaskell
   )
   where
 
-import qualified ASCII.Caseless as Caseless
 import qualified ASCII.Char as ASCII
 import qualified ASCII.Superset as S
 
-import ASCII.Case (Case)
 import ASCII.Caseless (CaselessChar)
 import Data.Data (Data)
 import Data.Maybe (Maybe (..))
 import Language.Haskell.TH.Syntax (Exp, Pat, Q, dataToExpQ, dataToPatQ)
-
-import qualified Data.List as List
 
 exp :: Data a => a -> Q Exp
 exp = dataToExpQ (\_ -> Nothing)
