@@ -20,7 +20,7 @@ exp = dataToExpQ (\_ -> Nothing)
 pat :: Data a => a -> Q Pat
 pat = dataToPatQ (\_ -> Nothing)
 
-{- |
+{-|
 
 @
 $(charExp CapitalLetterF) == CapitalLetterF
@@ -31,7 +31,7 @@ $(charExp CapitalLetterF) == CapitalLetterF
 charExp :: ASCII.Char -> Q Exp
 charExp = exp
 
-{- |
+{-|
 
 @
 let
@@ -48,7 +48,7 @@ in
 charPat :: ASCII.Char -> Q Pat
 charPat = pat
 
-{- |
+{-|
 
 @
 $(charListExp [CapitalLetterH, SmallLetterI]) == [CapitalLetterH, SmallLetterI]
@@ -59,7 +59,7 @@ $(charListExp [CapitalLetterH, SmallLetterI]) == [CapitalLetterH, SmallLetterI]
 charListExp :: [ASCII.Char] -> Q Exp
 charListExp = exp
 
-{- |
+{-|
 
 @
 let
@@ -76,7 +76,7 @@ in
 charListPat :: [ASCII.Char] -> Q Pat
 charListPat = pat
 
-{- |
+{-| Expression with a 'S.FromChar' constraint
 
 @
 $(isCharExp CapitalLetterA) == CapitalLetterA
@@ -91,7 +91,7 @@ $(isCharExp CapitalLetterA) == ('ASCII.Refinement.asciiUnsafe' 65 :: 'ASCII.Refi
 isCharExp :: ASCII.Char -> Q Exp
 isCharExp x = [| S.fromChar $(charExp x) |]
 
-{- |
+{-| Pattern that matches a type with a 'S.ToChar' constraint
 
 @
 let
@@ -108,8 +108,10 @@ in
 isCharPat :: ASCII.Char -> Q Pat
 isCharPat x = [p| (S.toCharMaybe -> Just $(charPat x)) |]
 
+{-| Expression with a 'S.FromString' constraint -}
 isStringExp :: [ASCII.Char] -> Q Exp
 isStringExp xs = [| S.fromCharList $(charListExp xs) |]
 
+{-| Pattern that matches a type with a 'S.ToString' constraint -}
 isStringPat :: [ASCII.Char] -> Q Pat
 isStringPat xs = [p| (S.toCharListMaybe -> Just $(charListPat xs)) |]

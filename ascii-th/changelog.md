@@ -1,3 +1,10 @@
+### 1.1.0.0 (2023-01-03)
+
+Change `ascii-superset` version from 1.0 to 1.1
+
+The constraints on the quasi-quotes and template-haskell splices have changed
+accordingly with the changes to the classes as of ascii-superset-1.1.
+
 ### 1.0.0.14 (2023-01-02)
 
 Change test suite from `hedgehog` to `hspec`

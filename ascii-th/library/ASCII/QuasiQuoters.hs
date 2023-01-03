@@ -23,16 +23,14 @@ import Language.Haskell.TH.Syntax (Exp, Pat, Q)
 import qualified Data.Char as Unicode
 import qualified Data.String as Unicode
 
-{- | Produces an expression or a pattern corresponding to an ASCII character.
+{-| An expression pattern corresponding to an ASCII character
 
-The result will have an 'ASCII.Superset.CharSuperset' constraint; since this is
-polymorphic, use with a type signature to specify the particular you want is
-recommended.
+=== In an expression context
+
+The result will have a 'ASCII.Superset.FromChar' constraint.
 
 The quasi-quoted string must consist of a single character that is within the
 ASCII character set.
-
-In an expression context:
 
 @
 [char|e|] == SmallLetterE
@@ -40,7 +38,12 @@ In an expression context:
 [char|e|] == (101 :: Word8)
 @
 
-In a pattern context:
+Since this is polymorphic, a type signature is recommended.
+
+=== In a pattern context
+
+The pattern matches a value of a type satisfying the 'ASCII.Superset.ToChar'
+constraint.
 
 @
 let
@@ -57,16 +60,14 @@ in
 char :: QuasiQuoter
 char = expPatQQ requireOneAscii isCharExp isCharPat
 
-{- | Produces an expression or a pattern corresponding to an ASCII string.
+{- | An expression or pattern corresponding to an ASCII string
 
-The result will have an 'ASCII.Superset.StringSuperset' constraint; since this
-is polymorphic, use with a type signature to specify the particular you want is
-recommended.
+=== In an expression context
+
+The result will have a 'ASCII.Superset.FromString' constraint.
 
 The quasi-quoted string must consist only of characters are within the ASCII
 character set.
-
-In an expression context:
 
 @
 [string|Hello!|] ==
@@ -79,7 +80,12 @@ In an expression context:
 'Data.ByteString.Builder.toLazyByteString' [string|Hello!|] == "Hello!"
 @
 
-In a pattern context:
+Since this is polymorphic, a type signature is recommended.
+
+=== In a pattern context
+
+The pattern matches a value of a type satisfying the 'ASCII.Superset.ToString'
+constraint.
 
 @
 let
