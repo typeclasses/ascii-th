@@ -1,8 +1,7 @@
 module Main (main) where
 
-import ASCII.QuasiQuoters (char, string)
-import ASCII.TemplateHaskell (charExp, charListExp, charListPat, charPat,
-                              isCharExp, isCharPat)
+import qualified ASCII.QuasiQuoters as QQ
+import qualified ASCII.TemplateHaskell as TH
 
 import ASCII.Char (Char (..))
 import ASCII.Refinement (ASCII, asciiUnsafe)
@@ -23,61 +22,61 @@ main :: IO ()
 main = hspec $ do
 
     describe "char quasi-quoter" $ do
-        it "can be ASCII.Char" $ shouldBe @Char [char|e|] SmallLetterE
-        it "can be Word8" $ shouldBe @Word8 [char|e|] 101
+        it "can be ASCII.Char" $ shouldBe @Char [QQ.char|e|] SmallLetterE
+        it "can be Word8" $ shouldBe @Word8 [QQ.char|e|] 101
         it "can be a pattern" $ do
-            let x = case Tilde of [char|@|] -> 1; [char|~|] -> 2; _ -> 3
+            let x = case Tilde of [QQ.char|@|] -> 1; [QQ.char|~|] -> 2; _ -> 3
             shouldBe @Integer x 2
 
     describe "string quasi-quoter" $ do
-        it "can be [ASCII.Char]" $ shouldBe @[Char] [string|Hello!|]
+        it "can be [ASCII.Char]" $ shouldBe @[Char] [QQ.string|Hello!|]
             [CapitalLetterH, SmallLetterE, SmallLetterL,
              SmallLetterL, SmallLetterO, ExclamationMark]
-        it "can be String" $ shouldBe @String [string|Hello!|] "Hello!"
-        it "can be Text" $ shouldBe @Text [string|Hello!|] "Hello!"
+        it "can be String" $ shouldBe @String [QQ.string|Hello!|] "Hello!"
+        it "can be Text" $ shouldBe @Text [QQ.string|Hello!|] "Hello!"
         it "can be bytestring Builder" $ shouldBe @LBS.ByteString
-            (BS.Builder.toLazyByteString [string|Hello!|]) "Hello!"
+            (BS.Builder.toLazyByteString [QQ.string|Hello!|]) "Hello!"
         it "can be a pattern" $ do
             let x = case [CapitalLetterH, SmallLetterI] of
-                      [string|Bye|] -> 1; [string|Hi|] -> 2; _ -> 3
+                      [QQ.string|Bye|] -> 1; [QQ.string|Hi|] -> 2; _ -> 3
             shouldBe @Integer x 2
 
     describe "charExp" $
         it "is a Char expression" $
-            shouldBe @Char $(charExp CapitalLetterF) CapitalLetterF
+            shouldBe @Char $(TH.charExp CapitalLetterF) CapitalLetterF
 
     describe "charPat" $ do
         it "is a Char pattern" $ do
-            let x = case SmallLetterS of $(charPat SmallLetterR) -> 1;
-                                         $(charPat SmallLetterS) -> 2;
+            let x = case SmallLetterS of $(TH.charPat SmallLetterR) -> 1;
+                                         $(TH.charPat SmallLetterS) -> 2;
                                          _ -> 3
             shouldBe @Integer x 2
 
     describe "charListExp" $ do
         it "is a [Char] expression" $ shouldBe @[Char]
-            $(charListExp [CapitalLetterH, SmallLetterI])
+            $(TH.charListExp [CapitalLetterH, SmallLetterI])
             [CapitalLetterH, SmallLetterI]
 
     describe "charListPat" $ do
         it "is a [Char] pattern" $ do
             let x = case [CapitalLetterH, SmallLetterI] of
-                      $(charListPat [CapitalLetterH, SmallLetterA]) -> 1
-                      $(charListPat [CapitalLetterH, SmallLetterI]) -> 2
+                      $(TH.charListPat [CapitalLetterH, SmallLetterA]) -> 1
+                      $(TH.charListPat [CapitalLetterH, SmallLetterI]) -> 2
                       _ -> 3
             shouldBe @Integer x 2
 
     describe "isCharExp" $ do
         it "can be ASCII.Char expression" $
-            shouldBe @Char $(isCharExp CapitalLetterA) CapitalLetterA
+            shouldBe @Char $(TH.isCharExp CapitalLetterA) CapitalLetterA
         it "can be a Word8 expression" $
-            shouldBe @Word8 $(isCharExp CapitalLetterA) 65
+            shouldBe @Word8 $(TH.isCharExp CapitalLetterA) 65
         it "can be an ASCII Word8 expression" $
             shouldBe @(ASCII Word8)
-                $(isCharExp CapitalLetterA) (asciiUnsafe 65)
+                $(TH.isCharExp CapitalLetterA) (asciiUnsafe 65)
 
     describe "isCharPat" $ do
         it "can be a Word8 pattern" $ do
-            let x = case (66 :: Word8) of $(isCharPat CapitalLetterA) -> 1
-                                          $(isCharPat CapitalLetterB) -> 2
+            let x = case (66 :: Word8) of $(TH.isCharPat CapitalLetterA) -> 1
+                                          $(TH.isCharPat CapitalLetterB) -> 2
                                           _ -> 3
             shouldBe @Word8 x 2
