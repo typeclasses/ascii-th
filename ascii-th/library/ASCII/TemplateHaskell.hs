@@ -3,6 +3,7 @@ module ASCII.TemplateHaskell
     {- * Monomorphic -}
     {- ** Character -} charExp, charPat,
     {- ** String -} charListExp, charListPat,
+    {- ** Caseless string -} caselessListExp, caselessListPat,
 
     {- * Polymorphic -}
     {- ** Character -} isCharExp, isCharPat,
@@ -95,6 +96,12 @@ $(isCharExp CapitalLetterA) == ('ASCII.Refinement.asciiUnsafe' 65 :: 'ASCII.Refi
 @
 
 -}
+
+caselessListExp :: [CaselessChar] -> Q Exp
+caselessListExp = exp
+
+caselessListPat :: [CaselessChar] -> Q Pat
+caselessListPat = pat
 
 isCharExp :: ASCII.Char -> Q Exp
 isCharExp x = [| S.fromChar $(charExp x) |]

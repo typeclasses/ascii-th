@@ -1,3 +1,10 @@
+### 1.1.1.0 (2023-01-03)
+
+Add to `ASCII.TemplateHaskell`:
+
+- `caselessListExp`
+- `caselessListPat`
+
 ### 1.1.0.0 (2023-01-03)
 
 Change `ascii-superset` version from 1.0 to 1.1
