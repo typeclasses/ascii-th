@@ -52,7 +52,7 @@ ghc."9.4" = nixos-22-11.haskell.packages.ghc94.override (old: {
         (new: old: {
             ascii-case = new.callPackage ./nix/ascii-case-1.0.1.0.nix {};
             ascii-caseless = new.callPackage ./nix/ascii-caseless-0.0.0.0.nix {};
-            ascii-superset = new.callPackage ./nix/ascii-superset-1.1.0.0.nix {};
+            ascii-superset = new.callPackage ./nix/ascii-superset-1.2.0.0.nix {};
         })
     ];
 });
