@@ -6,11 +6,11 @@ language extension.
 -}
 module ASCII.QuasiQuoters
   (
-    char,
-    string,
-    caseless,
-    upper,
-    lower,
+    {- * Character -} char,
+    {- * String -} string,
+    {- * Caseless string -} caseless,
+    {- * Upper-case string -} upper,
+    {- * Lower-case string -} lower,
   )
   where
 
@@ -116,10 +116,25 @@ string = expPatQQ requireAsciiList TH.isStringExp TH.isStringPat
 
 A monomorphic expression of type @['CaselessChar']@.
 
+@
+[caseless|Hello!|] ==
+    [LetterH, LetterE, LetterL, LetterL, LetterO, ExclamationMark]
+@
+
 === In a pattern context
 
 A case-insensitive match of any type belonging to the
 'ASCII.Superset.ToCaselessString' class.
+
+@
+let
+    x = case "Hello!" :: 'Text' of
+          [caseless|Bye!|] -> 1
+          [caseless|hEllo!|] -> 2
+          _ -> 3
+in
+    x == 2
+@
 
 -}
 caseless :: QuasiQuoter
@@ -136,6 +151,10 @@ you like; they will be converted to lower case automatically.
 The expression can become any type belonging to the 'ASCII.Superset.FromString'
 class. Any letters in the quoted content will be converted to lower case.
 
+@
+[lower|Hello!|] == ("hello!" :: 'Text')
+@
+
 === In a pattern context
 
 The pattern matches a value of a type satisfying the 'ASCII.Superset.ToString'
@@ -144,6 +163,16 @@ constraint. A value matches this pattern if:
 * All of the letters in the tested value are in lower case
 * The tested value satisfies a case-insensitive comparison
   with the quasi-quoted content
+
+@
+let
+    x = case "hi!" :: 'Text' of
+          [lower|wow|] -> 1
+          [lower|Hi!|] -> 2
+          _ -> 3
+in
+    x == 2
+@
 
 -}
 lower :: QuasiQuoter
@@ -160,6 +189,10 @@ you like; they will be converted to upper case automatically.
 The expression can become any type belonging to the 'ASCII.Superset.FromString'
 class. Any letters in the quoted content will be converted to upper case.
 
+@
+[upper|Hello!|] == ("HELLO!" :: 'Text')
+@
+
 === In a pattern context
 
 The pattern matches a value of a type satisfying the 'ASCII.Superset.ToString'
@@ -168,6 +201,16 @@ constraint. A value matches this pattern if:
 * All of the letters in the tested value are in upper case
 * The tested value satisfies a case-insensitive comparison
   with the quasi-quoted content
+
+@
+let
+    x = case "HI!" :: 'Text' of
+          [QQ.upper|wow|] -> 1
+          [QQ.upper|Hi!|] -> 2
+          _ -> 3
+in
+    x == 2
+@
 
 -}
 upper :: QuasiQuoter

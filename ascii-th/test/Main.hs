@@ -53,11 +53,11 @@ main = hspec $ do
                           [QQ.caseless|Bye|] -> 1; [QQ.caseless|Hi|] -> 2; _ -> 3
                 shouldBe @Integer x 2
             it "can be a pattern over Text" $ do
-                let x = case [QQ.string|Hello!|] :: Text of
+                let x = case "Hello!" :: Text of
                           [QQ.caseless|Bye!|] -> 1; [QQ.caseless|Hello!|] -> 2; _ -> 3
                 shouldBe @Integer x 2
             it "matches Text in a case-insensitive manner" $ do
-                let x = case [QQ.string|Hello!|] :: Text of
+                let x = case "Hello!" :: Text of
                           [QQ.caseless|Bye!|] -> 1; [QQ.caseless|hEllo!|] -> 2; _ -> 3
                 shouldBe @Integer x 2
 
