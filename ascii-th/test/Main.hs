@@ -3,9 +3,11 @@ module Main (main) where
 import qualified ASCII.QuasiQuoters as QQ
 import qualified ASCII.TemplateHaskell as TH
 
+import ASCII.CaseRefinement (ASCII'lower, ASCII'upper, asciiCaseUnsafe)
 import ASCII.Char (Char (..))
 import ASCII.Refinement (ASCII, asciiUnsafe)
 
+import Data.ByteString (ByteString)
 import Data.Function (($))
 import Data.String (String)
 import Data.Text (Text)
@@ -13,7 +15,7 @@ import Data.Word (Word8)
 import Prelude (Integer)
 import System.IO (IO)
 
-import qualified ASCII.Caseless as Caseless
+import qualified ASCII.Caseless as CI
 import qualified Data.ByteString.Builder as BS.Builder
 import qualified Data.ByteString.Lazy as LBS
 
@@ -46,10 +48,10 @@ main = hspec $ do
 
         describe "caseless" $ do
             it "can be [CaselessChar]" $ shouldBe [QQ.caseless|Hello!|]
-                [Caseless.LetterH, Caseless.LetterE, Caseless.LetterL,
-                Caseless.LetterL, Caseless.LetterO, Caseless.ExclamationMark]
+                [CI.LetterH, CI.LetterE, CI.LetterL,
+                CI.LetterL, CI.LetterO, CI.ExclamationMark]
             it "can be a pattern over [CaselessChar]" $ do
-                let x = case [Caseless.LetterH, Caseless.LetterI] of
+                let x = case [CI.LetterH, CI.LetterI] of
                           [QQ.caseless|Bye|] -> 1; [QQ.caseless|Hi|] -> 2; _ -> 3
                 shouldBe @Integer x 2
             it "can be a pattern over Text" $ do
@@ -63,30 +65,26 @@ main = hspec $ do
 
         describe "upper" $ do
             it "can be Text" $ shouldBe [QQ.upper|Hello!|] ("HELLO!" :: Text)
+            it "can be case-refined" $ shouldBe [QQ.upper|Hello!|]
+                (asciiCaseUnsafe "HELLO!" :: ASCII'upper ByteString)
             it "can match Text" $ do
                 let x = case "HI!" :: Text of
-                          [QQ.upper|wow|] -> 1
-                          [QQ.upper|Hi!|] -> 2
-                          _ -> 3
+                          [QQ.upper|wow|] -> 1; [QQ.upper|Hi!|] -> 2; _ -> 3
                 shouldBe @Integer x 2
             it "only matches all upper-case Text" $ do
-                let x = case "Hi!" :: Text of
-                          [QQ.upper|Hi!|] -> 1
-                          _ -> 2
+                let x = case "Hi!" :: Text of [QQ.upper|Hi!|] -> 1; _ -> 2
                 shouldBe @Integer x 2
 
         describe "lower" $ do
             it "can be Text" $ shouldBe [QQ.lower|Hello!|] ("hello!" :: Text)
+            it "can be case-refined" $ shouldBe [QQ.lower|Hello!|]
+                (asciiCaseUnsafe "hello!" :: ASCII'lower ByteString)
             it "can match Text" $ do
                 let x = case "hi!" :: Text of
-                          [QQ.lower|wow|] -> 1
-                          [QQ.lower|Hi!|] -> 2
-                          _ -> 3
+                          [QQ.lower|wow|] -> 1; [QQ.lower|Hi!|] -> 2; _ -> 3
                 shouldBe @Integer x 2
             it "only matches all lower-case Text" $ do
-                let x = case "Hi!" :: Text of
-                          [QQ.lower|Hi!|] -> 1
-                          _ -> 2
+                let x = case "Hi!" :: Text of [QQ.lower|Hi!|] -> 1; _ -> 2
                 shouldBe @Integer x 2
 
     describe "ASCII.TemplateHaskell" $ do
@@ -97,9 +95,10 @@ main = hspec $ do
 
         describe "charPat" $ do
             it "is a Char pattern" $ do
-                let x = case SmallLetterS of $(TH.charPat SmallLetterR) -> 1;
-                                             $(TH.charPat SmallLetterS) -> 2;
-                                             _ -> 3
+                let x = case SmallLetterS of
+                          $(TH.charPat SmallLetterR) -> 1;
+                          $(TH.charPat SmallLetterS) -> 2;
+                          _ -> 3
                 shouldBe @Integer x 2
 
         describe "charListExp" $ do
@@ -126,15 +125,16 @@ main = hspec $ do
 
         describe "isCharPat" $ do
             it "can be a Word8 pattern" $ do
-                let x = case (66 :: Word8) of $(TH.isCharPat CapitalLetterA) -> 1
-                                              $(TH.isCharPat CapitalLetterB) -> 2
-                                              _ -> 3
+                let x = case (66 :: Word8) of
+                          $(TH.isCharPat CapitalLetterA) -> 1
+                          $(TH.isCharPat CapitalLetterB) -> 2
+                          _ -> 3
                 shouldBe @Integer x 2
 
         describe "caselessIsStringPat" $ do
             it "matches a cased string regardless of its case" $ do
                 let x = case [QQ.string|Hi!|] :: Text of
-                      $(TH.caselessIsStringPat [Caseless.LetterG, Caseless.LetterO, Caseless.FullStop]) -> 1
-                      $(TH.caselessIsStringPat [Caseless.LetterH, Caseless.LetterI, Caseless.ExclamationMark]) -> 2
+                      $(TH.caselessIsStringPat [CI.LetterG, CI.LetterO, CI.FullStop]) -> 1
+                      $(TH.caselessIsStringPat [CI.LetterH, CI.LetterI, CI.ExclamationMark]) -> 2
                       _ -> 3
                 shouldBe @Integer x 2

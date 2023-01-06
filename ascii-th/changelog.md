@@ -1,3 +1,17 @@
+### 1.2.0.0 (2023-01-06)
+
+The constraints on `lower` and `upper` quasi-quotations in an expression context
+are changes from `FromString` to `ToCasefulString 'LowerCase` and
+`ToCasefulString 'UpperCase` respectively. This expands the range of types
+inhabited by lower/uppercase quotes to include `ASCII'lower` and `ASCII'upper`,
+which were previously not able to be expressed using quasi-quotations.
+
+Additions to `ASCII.TemplateHaskell`:
+
+```haskell
+upperStringExp, lowerStringExp :: [CaselessChar] -> Q Exp
+```
+
 ### 1.1.1.0 (2023-01-03)
 
 New in `ASCII.QuasiQuoters`:

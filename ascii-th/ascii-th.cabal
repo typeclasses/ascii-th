@@ -1,7 +1,7 @@
 cabal-version: 3.0
 
 name: ascii-th
-version: 1.1.1.0
+version: 1.2.0.0
 synopsis: Template Haskell support for ASCII
 category: Data, Text
 
@@ -31,13 +31,15 @@ common base
         ascii-case ^>= 1.0
       , ascii-caseless ^>= 0.0
       , ascii-char ^>= 1.0
-      , ascii-superset ^>= 1.1 || ^>= 1.2
+      , ascii-superset ^>= 1.2.4
       , base ^>= 4.14 || ^>= 4.15 || ^>= 4.16 || ^>= 4.17
 
 library
     import: base
     hs-source-dirs: library
-    default-extensions: NoImplicitPrelude TemplateHaskell ViewPatterns
+    default-extensions: AllowAmbiguousTypes DataKinds FlexibleContexts
+        KindSignatures NoImplicitPrelude ScopedTypeVariables
+        TemplateHaskell TypeApplications ViewPatterns
     build-depends:
         template-haskell ^>= 2.16 || ^>= 2.17 || ^>= 2.18 || ^>= 2.19
     exposed-modules:

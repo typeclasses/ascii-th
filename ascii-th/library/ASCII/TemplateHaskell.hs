@@ -9,12 +9,14 @@ module ASCII.TemplateHaskell
     {- ** Character -} isCharExp, isCharPat,
     {- ** String -} isStringExp, isStringPat,
     {- ** Caseless string -} caselessIsStringPat,
+    {- ** Single-case string -} upperStringExp, lowerStringExp,
   )
   where
 
 import qualified ASCII.Char as ASCII
 import qualified ASCII.Superset as S
 
+import ASCII.Case (Case (..))
 import ASCII.Caseless (CaselessChar)
 import Data.Data (Data)
 import Data.Maybe (Maybe (..))
@@ -132,3 +134,17 @@ isStringPat xs = [p| (S.toCharListMaybe -> Just $(charListPat xs)) |]
 class, as if it were a list of 'CaselessChar' -}
 caselessIsStringPat :: [CaselessChar] -> Q Pat
 caselessIsStringPat xs = [p| (S.toCaselessCharListMaybe -> Just $(caselessListPat xs)) |]
+
+{-| Expression with a @'ASCII.Superset.ToCasefulString 'UpperCase'@ constraint -}
+upperStringExp :: [CaselessChar] -> Q Exp
+upperStringExp xs = [| toUpper $(caselessListExp xs) |]
+
+{-| Expression with a @'ASCII.Superset.ToCasefulString 'LowerCase'@ constraint -}
+lowerStringExp :: [CaselessChar] -> Q Exp
+lowerStringExp xs = [| toLower $(caselessListExp xs) |]
+
+toUpper :: S.ToCasefulString 'UpperCase string => [CaselessChar] -> string
+toUpper = S.toCasefulString @'UpperCase
+
+toLower :: S.ToCasefulString 'LowerCase string => [CaselessChar] -> string
+toLower = S.toCasefulString @'LowerCase

@@ -19,16 +19,13 @@ import ASCII.Caseless (CaselessChar)
 import ASCII.Char (Char)
 import Control.Monad (return, (>=>))
 import Control.Monad.Fail (MonadFail, fail)
-import Data.Functor ((<$>))
 import Data.Maybe (Maybe (..))
 import Language.Haskell.TH.Quote (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp, Pat, Q)
 
-import qualified ASCII.Case as Case
 import qualified ASCII.Superset as S
 import qualified ASCII.TemplateHaskell as TH
 import qualified Data.Char as Unicode
-import qualified Data.List as List
 import qualified Data.String as Unicode
 
 {-| An expression pattern corresponding to an ASCII character
@@ -148,11 +145,14 @@ you like; they will be converted to lower case automatically.
 
 === In an expression context
 
-The expression can become any type belonging to the 'ASCII.Superset.FromString'
-class. Any letters in the quoted content will be converted to lower case.
+The expression can become any type satisfying the
+@('ASCII.Superset.ToCasefulString' ''LowerCase')@ constraint.
+Any letters in the quoted content will be converted to lower case.
 
 @
-[lower|Hello!|] == ("hello!" :: 'Text')
+[lower|Hello!|] == ("hello!" :: 'Data.Text.Text')
+
+[lower|Hello!|] == ("hello!" :: 'ASCII'lower' 'Data.ByteString.ByteString')
 @
 
 === In a pattern context
@@ -176,7 +176,8 @@ in
 
 -}
 lower :: QuasiQuoter
-lower = ofCase LowerCase
+lower = expPatQQ requireAsciiListCI TH.lowerStringExp
+    (\x -> TH.isStringPat (S.toCasefulString @'LowerCase x))
 
 {-| An expression or pattern corresponding to an ASCII string where all the
 letters are of upper case
@@ -186,11 +187,14 @@ you like; they will be converted to upper case automatically.
 
 === In an expression context
 
-The expression can become any type belonging to the 'ASCII.Superset.FromString'
-class. Any letters in the quoted content will be converted to upper case.
+The expression can become any type satisfying the
+@('ASCII.Superset.ToCasefulString' ''UpperCase')@ constraint.
+Any letters in the quoted content will be converted to upper case.
 
 @
 [upper|Hello!|] == ("HELLO!" :: 'Text')
+
+[upper|Hello!|] == ("HELLO!" :: 'ASCII'upper' 'Data.ByteString.ByteString')
 @
 
 === In a pattern context
@@ -214,10 +218,8 @@ in
 
 -}
 upper :: QuasiQuoter
-upper = ofCase UpperCase
-
-ofCase :: Case -> QuasiQuoter
-ofCase c = expPatQQ (requireAsciiToCase c) TH.isStringExp TH.isStringPat
+upper = expPatQQ requireAsciiListCI TH.upperStringExp
+    (\x -> TH.isStringPat (S.toCasefulString @'UpperCase x))
 
 {-| Require the string to consist of exactly one ASCII character -}
 requireOneAscii :: Unicode.String -> Q Char
@@ -243,11 +245,6 @@ requireAsciiList = S.toCharListMaybe || "Must be only ASCII characters."
 and return them with letter case discarded -}
 requireAsciiListCI :: Unicode.String -> Q [CaselessChar]
 requireAsciiListCI = S.toCaselessCharListMaybe || "Must be only ASCII characters."
-
-{-| Require the string to consist of all ASCII characters,
-and return them converted to the given case -}
-requireAsciiToCase :: Case -> Unicode.String -> Q [Char]
-requireAsciiToCase c s = List.map (Case.toCase c) <$> requireAsciiList s
 
 (||) :: (a -> Maybe b) -> Unicode.String -> a -> Q b
 f || msg = \a -> case f a of Just b -> return b; Nothing -> fail msg
