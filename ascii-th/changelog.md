@@ -1,3 +1,7 @@
+### 1.2.0.1 (2023-06-26)
+
+Raise language to GHC2021
+
 ### 1.2.0.0 (2023-01-06)
 
 The constraints on `lower` and `upper` quasi-quotations in an expression context

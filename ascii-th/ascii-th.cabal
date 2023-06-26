@@ -1,7 +1,7 @@
 cabal-version: 3.0
 
 name: ascii-th
-version: 1.2.0.0
+version: 1.2.0.1
 synopsis: Template Haskell support for ASCII
 category: Data, Text
 
@@ -25,26 +25,30 @@ source-repository head
     location: git://github.com/typeclasses/ascii-th.git
 
 common base
-    default-language: Haskell2010
+    default-language: GHC2021
     ghc-options: -Wall
+    default-extensions:
+        DataKinds
+        NoImplicitPrelude
+        OverloadedStrings
+        QuasiQuotes
+        TemplateHaskell
+        ViewPatterns
     build-depends:
-        ascii-case ^>= 1.0
+      , ascii-case ^>= 1.0.1
       , ascii-caseless ^>= 0.0
-      , ascii-char ^>= 1.0
-      , ascii-superset ^>= 1.2.4 || ^>= 1.3.0
-      , base ^>= 4.14 || ^>= 4.15 || ^>= 4.16 || ^>= 4.17
+      , ascii-char ^>= 1.0.1
+      , ascii-superset ^>= 1.3.0
+      , base ^>= 4.16 || ^>= 4.17 || ^>= 4.18
 
 library
     import: base
     hs-source-dirs: library
-    default-extensions: AllowAmbiguousTypes DataKinds FlexibleContexts
-        KindSignatures NoImplicitPrelude ScopedTypeVariables
-        TemplateHaskell TypeApplications ViewPatterns
     build-depends:
-        template-haskell ^>= 2.16 || ^>= 2.17 || ^>= 2.18 || ^>= 2.19
+      , template-haskell ^>= 2.18 || ^>= 2.19 || ^>= 2.20
     exposed-modules:
         ASCII.TemplateHaskell
-      , ASCII.QuasiQuoters
+        ASCII.QuasiQuoters
 
 test-suite test-ascii-th
     import: base
@@ -52,10 +56,8 @@ test-suite test-ascii-th
     ghc-options: -fno-warn-overlapping-patterns
     hs-source-dirs: test
     main-is: Main.hs
-    default-extensions: NoImplicitPrelude OverloadedStrings QuasiQuotes
-        TemplateHaskell TypeApplications ViewPatterns
     build-depends:
-        ascii-th
-      , bytestring ^>= 0.10.12 || ^>= 0.11
-      , hspec ^>= 2.8.5 || ^>= 2.9 || ^>= 2.10
-      , text ^>= 1.2.4 || ^>= 2.0
+      , ascii-th
+      , bytestring ^>= 0.11.4 || ^>= 0.11
+      , hspec ^>= 2.9.7 || ^>= 2.10 || ^>= 2.11
+      , text ^>= 1.2.5 || ^>= 2.0
